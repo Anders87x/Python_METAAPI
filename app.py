@@ -6,11 +6,11 @@ TOKEN_ANDERCODE = "ANDERCODEPYTHONAPIMETA"
 
 def verificar_token(req):
     try:
-        token = req.args.get('hub_verify_token')
-        challenge = req.args.get('hub_challenge')
+        token = req.args.get('hub.verify_token')
+        challenge = req.args.get('hub.challenge')
 
         if challenge and token and token == TOKEN_ANDERCODE:
-            return challenge
+            return jsonify({'hub.challenge': challenge})
         else:
             return jsonify({'error': 'Invalid token'})
 
@@ -33,11 +33,9 @@ def recibir_mensajes(req):
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     if request.method == 'GET':
-        challenge = verificar_token(request)
-        return challenge
+        return verificar_token(request)
     elif request.method == 'POST':
-        response = recibir_mensajes(request)
-        return response
+        return recibir_mensajes(request)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
