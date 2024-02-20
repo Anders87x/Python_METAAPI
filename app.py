@@ -1,17 +1,37 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-@app.route('/webhook', methods=['POST'])
-def respond():
-    token = 'ANDERCODE'  # Reemplaza esto con tu token real
-    auth_header = request.headers.get('Authorization')
+TOKEN_ANDERCODE = "ANDERCODE"
 
-    if auth_header != 'Bearer ' + token:
-        return {'error': 'Unauthorized'}, 401
+@app.route('/webhook', methods=['GET', 'POST'])
+def webhook():
+    if request.method == 'GET':
+        challenge = verificar_token(request)
+        print("GET")
+        return challenge
+    elif request.method == 'POST':
+        response = recibir_mensajes(request)
+        print("POST")
+        return response
 
-    print(request.json)
-    return {'status': 'success'}, 200
+def verificar_token(req):
+    token = req.args.get('hub.verify_token')
+    challenge = req.args.get('hub.challenge')
+
+    if challenge and token == TOKEN_ANDERCODE:
+        return challenge
+    else:
+        return jsonify({'error': 'Invalid token'}), 401
+
+def recibir_mensajes(req):
+    try:
+        print(req)
+        return jsonify({'message': 'EVENT_RECEIVED'})
+
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'EVENT_RECEIVED'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
