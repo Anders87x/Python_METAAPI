@@ -26,7 +26,19 @@ def verificar_token(req):
 
 def recibir_mensajes(req):
     try:
-        print(req)
+        req = request.get_json()
+        entry = req['entry'][0]
+        changes = entry['changes'][0]
+        value = changes['value']
+        objeto_mensaje = value['messages']
+
+        if objeto_mensaje:
+            messages = objeto_mensaje[0]
+            texto = messages['text']['body']
+            numero = messages['from']
+
+            print(texto)
+
         return jsonify({'message': 'EVENT_RECEIVED'})
 
     except Exception as e:
