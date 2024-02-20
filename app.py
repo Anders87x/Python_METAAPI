@@ -19,11 +19,11 @@ def verificar_token(req):
 
 def recibir_mensajes(req):
     try:
-        entry = req.json['entry'][0]
-        changes = entry['changes'][0]
-        value = changes['value']
+        data = req.json
 
-        # Procesar el mensaje según tus necesidades
+        # Aquí puedes procesar el mensaje de WhatsApp según tus necesidades
+        # Por ejemplo, puedes imprimir el contenido del mensaje:
+        print(data['messages'][0]['body'])
 
         return jsonify({'message': 'EVENT_RECEIVED'})
 
