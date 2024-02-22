@@ -51,7 +51,7 @@ def recibir_mensajes(req):
                     elif tipo_interactivo == "list_reply":
                         texto = messages["interactive"]["list_reply"]["id"]
                         numero = messages["from"]
-                        print(texto)
+                        enviar_mensaje_whatsapp(texto, numero)
 
                 if "text" in messages:
                     texto = messages["text"]["body"]
