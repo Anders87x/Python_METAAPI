@@ -28,7 +28,11 @@ def verificar_token(req):
 
 def recibir_mensajes(req):
     try:
-        objeto_mensaje = req['entry'][0]['changes'][0]['value']['messages']
+        req = request.get_json()
+        entry = req['entry'][0]
+        changes = entry['changes'][0]
+        value = changes['value']
+        objeto_mensaje = value['messages']
 
         if objeto_mensaje:
             messages = objeto_mensaje[0]
@@ -37,17 +41,17 @@ def recibir_mensajes(req):
                 tipo = messages["type"]
 
                 if tipo == "interactive":
-                        tipo_interactivo = messages["interactive"]["type"]
+                    tipo_interactivo = messages["interactive"]["type"]
 
-                        if tipo_interactivo == "button_reply":
-                            texto = messages["interactive"]["button_reply"]["id"]
-                            numero = messages["from"]
-                            enviar_mensaje_whatsapp(texto, numero)
+                    if tipo_interactivo == "button_reply":
+                        texto = messages["interactive"]["button_reply"]["id"]
+                        numero = messages["from"]
+                        enviar_mensaje_whatsapp(texto, numero)
 
-                        elif tipo_interactivo == "list_reply":
-                            texto = messages["interactive"]["list_reply"]["id"]
-                            numero = messages["from"]
-                            print(texto)
+                    elif tipo_interactivo == "list_reply":
+                        texto = messages["interactive"]["list_reply"]["id"]
+                        numero = messages["from"]
+                        print(texto)
 
                 if "text" in messages:
                     texto = messages["text"]["body"]
