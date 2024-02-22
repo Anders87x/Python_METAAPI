@@ -1,16 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Mensajes</title>
+    <title>Mensajes</title>
+    <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-    <h1>Registro de Mensajes</h1>
-    <ul>
-        {% for registro in registros %}
-            <li>{{ registro.fecha_y_hora }} - {{ registro.texto }}</li>
+    <h2>Registro de Mensajes</h2>
+    <table>
+        <tr>
+            <th>Fecha y Hora</th>
+            <th>Mensaje</th>
+        </tr>
+        {% for mensaje in mensajes %}
+            <tr>
+                <td>{{ mensaje.fecha_y_hora }}</td>
+                <td>{{ mensaje.texto }}</td>
+            </tr>
         {% endfor %}
-    </ul>
+    </table>
 </body>
 </html>

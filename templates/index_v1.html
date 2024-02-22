@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Mensajes</title>
+</head>
+<body>
+    <h1>Registro de Mensajes</h1>
+    <ul>
+        {% for registro in registros %}
+            <li>{{ registro.fecha_y_hora }} - {{ registro.texto }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
