@@ -69,7 +69,8 @@ def verificar_token(req):
 
 def recibir_mensajes(req):
 
-    agregar_mensaje_log(json.dumps(request))
+    req = request.get_json()
+    agregar_mensaje_log(json.dumps(req))
 
     try:
         # Manejar mensajes entrantes
