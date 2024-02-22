@@ -28,10 +28,10 @@
             <th>Fecha y Hora</th>
             <th>Mensaje</th>
         </tr>
-        {% for mensaje in mensajes %}
+        {% for registro in registros %}
             <tr>
-                <td>{{ mensaje.fecha_y_hora }}</td>
-                <td>{{ mensaje.texto }}</td>
+                <td>{{ registro.fecha_y_hora }}</td>
+                <td>{{ registro.texto }}</td>
             </tr>
         {% endfor %}
     </table>
