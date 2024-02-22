@@ -69,8 +69,8 @@ def verificar_token(req):
 
 def recibir_mensajes(req):
 
-    req = request.get_json()
-    agregar_mensaje_log(json.dumps(req))
+    #req = request.get_json()
+    #agregar_mensaje_log(json.dumps(req))
 
     try:
         # Manejar mensajes entrantes
@@ -80,7 +80,7 @@ def recibir_mensajes(req):
         value = changes['value']
         objeto_mensaje = value['messages']
 
-        #agregar_mensaje_log(objeto_mensaje)
+        agregar_mensaje_log(objeto_mensaje)
 
         if objeto_mensaje:
             messages = objeto_mensaje[0]
@@ -111,7 +111,6 @@ def recibir_mensajes(req):
         return jsonify({'message': 'EVENT_RECEIVED'})
 
     except Exception as e:
-        print(e)
         return jsonify({'message': 'EVENT_RECEIVED'})
 
 def enviar_mensaje_whatsapp(texto, number):
