@@ -28,18 +28,31 @@ def verificar_token(req):
 
 def recibir_mensajes(req):
     try:
-        req = request.get_json()
-        entry = req['entry'][0]
-        changes = entry['changes'][0]
-        value = changes['value']
-        objeto_mensaje = value['messages']
+        objeto_mensaje = req['entry'][0]['changes'][0]['value']['messages']
 
         if objeto_mensaje:
             messages = objeto_mensaje[0]
-            texto = messages['text']['body']
-            numero = messages['from']
 
-            enviar_mensaje_whatsapp(texto, numero)
+            if "type" in messages:
+                tipo = messages["type"]
+
+                if tipo == "interactive":
+                        tipo_interactivo = messages["interactive"]["type"]
+
+                        if tipo_interactivo == "button_reply":
+                            texto = messages["interactive"]["button_reply"]["id"]
+                            numero = messages["from"]
+                            enviar_mensaje_whatsapp(texto, numero)
+
+                        elif tipo_interactivo == "list_reply":
+                            texto = messages["interactive"]["list_reply"]["id"]
+                            numero = messages["from"]
+                            print(texto)
+
+                if "text" in messages:
+                    texto = messages["text"]["body"]
+                    numero = messages["from"]
+                    enviar_mensaje_whatsapp(texto, numero)
 
         return jsonify({'message': 'EVENT_RECEIVED'})
 
@@ -77,7 +90,7 @@ def enviar_mensaje_whatsapp(texto, number):
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": "Bearer EAAK2skfVxy4BOwO3AfguPDN7kNnGV9OUiMIEzj2JOMrH8Rr8zajjxQ9XOtiVBAplcrpREB2QmIMZCVYrjKWzwDu7se9B9vQ9R655Schdib2bwK6zZCGF3Woi7CZBZBPZC2nXbHwOIKafChfiPyoqcgSTgtQAzczIOmBUT9cbZAVatm3N9IoCZCNmPQtuIxMSLGLL7ZBSU5CriGXqL2WZCCUcCVzHZAk2oZD"
+        "Authorization": "Bearer EAAK2skfVxy4BO8udon6ZAnAyg7QoJww2ZCjGDXCWCWrlQrurOBSFJowy2TU4sSBswynxyx5WiqzKgvcCtsaSKESPIZAdCctKO8VbJcWygcpU1aivcuGbUm5729cACe6PU5L0ao7jcUaUal1m2NE9MJJKWfFfEfgdkVzrpsD5O58O61kPkWOKAE0Vldlp7L9ZCtIdN0Rgf4X2LHSHNZBbo5zHZAuZAh9"
     }
 
     connection = http.client.HTTPSConnection("graph.facebook.com")
