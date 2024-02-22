@@ -21,11 +21,16 @@ class Log(db.Model):
 with app.app_context():
     db.create_all()
 
+# Función para ordenar los registros por fecha y hora
+def ordenar_por_fecha_y_hora(registros):
+    return sorted(registros, key=lambda x: x.fecha_y_hora, reverse=True)
+
 @app.route('/')
 def index():
     # Obtener todos los registros de la base de datos
     registros = Log.query.all()
-    return render_template('index.html', registros=registros)
+    registros_ordenados = ordenar_por_fecha_y_hora(registros)
+    return render_template('index.html', registros=registros_ordenados)
 
 mensajes_log = []
 
