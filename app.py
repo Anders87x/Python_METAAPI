@@ -179,6 +179,39 @@ def enviar_mensaje_whatsapp(texto, number):
                 }
             }
         }
+    elif "btnsi" in texto:
+        data={
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": number,
+            "type": "text",
+            "text": {
+                "preview_url": False,
+                "body": "Excelente muchas gracias por registrarse. 🤩"
+            }
+        }
+    elif "btnno" in texto:
+        data={
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": number,
+            "type": "text",
+            "text": {
+                "preview_url": False,
+                "body": "Entiendo, muchas gracias. "
+            }
+        }
+    elif "btntalvez" in texto:
+        data={
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": number,
+            "type": "text",
+            "text": {
+                "preview_url": False,
+                "body": "Espero se anime. "
+            }
+        }
     else:
         data = {
             "messaging_product": "whatsapp",
