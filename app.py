@@ -70,7 +70,7 @@ def verificar_token(req):
 
 def recibir_mensajes(req):
 
-    agregar_mensaje_log(req)
+    agregar_mensaje_log("req")
 
     try:
         # Manejar mensajes entrantes
