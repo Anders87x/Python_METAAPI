@@ -15,7 +15,7 @@ db = SQLAlchemy(app)
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fecha_y_hora = db.Column(db.DateTime, default=datetime.utcnow)
-    texto = db.Column(db.String(5000))
+    texto = db.Column(db.TEXT)
 
 # Crear la tabla si no existe
 with app.app_context():
