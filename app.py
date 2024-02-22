@@ -1,23 +1,65 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import http.client
 import json
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
 
+# Configuración de la base de datos SQLite
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///metapython.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+# Modelo de la tabla Log
+class Log(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    fecha_y_hora = db.Column(db.DateTime, default=datetime.utcnow)
+    texto = db.Column(db.String(5000))
+
+# Crear la tabla si no existe
+with app.app_context():
+    db.create_all()
+
+@app.route('/')
+def index():
+    # Obtener todos los registros de la base de datos
+    registros = Log.query.all()
+    return render_template('index.html', registros=registros)
+
+mensajes_log = []
+
+# Función para agregar mensajes y guardar en la base de datos
+def agregar_mensaje_log(texto):
+    mensajes_log.append(texto)
+
+    # Guardar el mensaje en la base de datos
+    nuevo_registro = Log(texto=texto)
+    db.session.add(nuevo_registro)
+    db.session.commit()
+
+# Token de verificación para la configuración inicial
 TOKEN_ANDERCODE = "ANDERCODE"
 
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     if request.method == 'GET':
+        # Manejar solicitud GET durante la configuración inicial
         challenge = verificar_token(request)
-        print("GET")
+
+        agregar_mensaje_log("GET")
+
         return challenge
     elif request.method == 'POST':
+        # Manejar mensajes POST (mensajes de usuario)
         response = recibir_mensajes(request)
-        print("POST")
+
+        agregar_mensaje_log("POST")
+
         return response
 
 def verificar_token(req):
+    # Función para verificar el token durante la configuración inicial
     token = req.args.get('hub.verify_token')
     challenge = req.args.get('hub.challenge')
 
@@ -27,7 +69,11 @@ def verificar_token(req):
         return jsonify({'error': 'Invalid token'}), 401
 
 def recibir_mensajes(req):
+
+    agregar_mensaje_log("req")
+
     try:
+        # Manejar mensajes entrantes
         req = request.get_json()
         entry = req['entry'][0]
         changes = entry['changes'][0]
@@ -41,6 +87,7 @@ def recibir_mensajes(req):
                 tipo = messages["type"]
 
                 if tipo == "interactive":
+                    # Manejar mensajes interactivos
                     tipo_interactivo = messages["interactive"]["type"]
 
                     if tipo_interactivo == "button_reply":
@@ -54,6 +101,7 @@ def recibir_mensajes(req):
                         enviar_mensaje_whatsapp(texto, numero)
 
                 if "text" in messages:
+                    # Manejar mensajes de texto
                     texto = messages["text"]["body"]
                     numero = messages["from"]
                     enviar_mensaje_whatsapp(texto, numero)
@@ -65,9 +113,11 @@ def recibir_mensajes(req):
         return jsonify({'message': 'EVENT_RECEIVED'})
 
 def enviar_mensaje_whatsapp(texto, number):
+    # Función para enviar mensajes de WhatsApp
     texto = texto.lower()
 
     if "hola" in texto:
+        # Enviar mensaje de bienvenida
         data = {
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
@@ -79,6 +129,7 @@ def enviar_mensaje_whatsapp(texto, number):
             }
         }
     elif "1" in texto:
+        # Enviar información detallada
         data={
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
@@ -212,6 +263,17 @@ def enviar_mensaje_whatsapp(texto, number):
                 "body": "Espero se anime. "
             }
         }
+    elif "adios" in texto or "bye" in texto or "nos vemos" in texto or "adiós" in texto:
+        data={
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": number,
+            "type": "text",
+            "text": {
+                "preview_url": False,
+                "body": "Hasta luego. 🌟"
+            }
+        }
     else:
         data = {
             "messaging_product": "whatsapp",
@@ -224,6 +286,7 @@ def enviar_mensaje_whatsapp(texto, number):
             }
         }
 
+    # Convertir el diccionario a formato JSON
     data = json.dumps(data)
 
     headers = {
@@ -234,6 +297,7 @@ def enviar_mensaje_whatsapp(texto, number):
     connection = http.client.HTTPSConnection("graph.facebook.com")
 
     try:
+        # Enviar la solicitud HTTP
         connection.request("POST", "/v18.0/229523723581696/messages", data, headers)
         response = connection.getresponse()
 
@@ -248,4 +312,5 @@ def enviar_mensaje_whatsapp(texto, number):
         connection.close()
 
 if __name__ == '__main__':
+    # Ejecutar la aplicación Flask
     app.run(host='0.0.0.0', port=80, debug=True)
