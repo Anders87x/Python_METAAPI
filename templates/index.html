@@ -8,7 +8,7 @@
 <body>
     <h1>Registro de Mensajes</h1>
     <ul>
-        {% for registro in registros %}
+        {% for registro in sorted(registros, key=lambda x: x.fecha_y_hora, reverse=True) %}
             <li>{{ registro.fecha_y_hora }} - {{ registro.texto }}</li>
         {% endfor %}
     </ul>
