@@ -80,6 +80,8 @@ def recibir_mensajes(req):
         value = changes['value']
         objeto_mensaje = value['messages']
 
+        agregar_mensaje_log(objeto_mensaje)
+
         if objeto_mensaje:
             messages = objeto_mensaje[0]
 
