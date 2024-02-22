@@ -95,18 +95,30 @@ def recibir_mensajes(req):
                     if tipo_interactivo == "button_reply":
                         texto = messages["interactive"]["button_reply"]["id"]
                         numero = messages["from"]
+                        
                         enviar_mensaje_whatsapp(texto, numero)
+
+                        agregar_mensaje_log(json.dumps(texto))
+                        agregar_mensaje_log(json.dumps(numero))
 
                     elif tipo_interactivo == "list_reply":
                         texto = messages["interactive"]["list_reply"]["id"]
                         numero = messages["from"]
+
                         enviar_mensaje_whatsapp(texto, numero)
+
+                        agregar_mensaje_log(json.dumps(texto))
+                        agregar_mensaje_log(json.dumps(numero))
 
                 if "text" in messages:
                     # Manejar mensajes de texto
                     texto = messages["text"]["body"]
                     numero = messages["from"]
+
                     enviar_mensaje_whatsapp(texto, numero)
+
+                    agregar_mensaje_log(json.dumps(texto))
+                    agregar_mensaje_log(json.dumps(numero))
 
         return jsonify({'message': 'EVENT_RECEIVED'})
 
