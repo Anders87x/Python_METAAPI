@@ -51,16 +51,10 @@ def webhook():
     if request.method == 'GET':
         # Manejar solicitud GET durante la configuración inicial
         challenge = verificar_token(request)
-
-        agregar_mensaje_log("GET")
-
         return challenge
     elif request.method == 'POST':
         # Manejar mensajes POST (mensajes de usuario)
         response = recibir_mensajes(request)
-
-        agregar_mensaje_log("POST")
-
         return response
 
 def verificar_token(req):
@@ -75,7 +69,7 @@ def verificar_token(req):
 
 def recibir_mensajes(req):
 
-    agregar_mensaje_log(json.dumps(req))
+    agregar_mensaje_log(request.get_json())
 
     try:
         # Manejar mensajes entrantes
